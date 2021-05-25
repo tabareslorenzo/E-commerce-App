@@ -7,8 +7,7 @@ from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
 
-# from signup import *
-from signin import *
+
 
 app.config['MONGODB_SETTINGS'] = {
     'db': os.environ.get("MONGO_DB_NAME", "auth"),
@@ -18,6 +17,8 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine()
 db.init_app(app)
 print(app.config['MONGODB_SETTINGS'])
+from signup import *
+from signin import *
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 6000))

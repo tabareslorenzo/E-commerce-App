@@ -26,17 +26,17 @@ from flask import (
 
 
 
-@app.route('/set/')
-def set():
-    session['key'] = 'value'
-    return 'ok'
+# @app.route('/set/')
+# def set():
+#     session['key'] = 'value'
+#     return 'ok'
 
-@app.route('/get/')
-def get():
-    return session.get('key', 'not set')
+# @app.route('/get/')
+# def get():
+#     return session.get('key', 'not set')
 
 @app.route('/api/users/signin', methods=['POST'])
-def signup():
+def signin():
     data = request.get_json()
     print(data)
     try:
