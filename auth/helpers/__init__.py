@@ -37,3 +37,4 @@ def compare_password(email, password):
         return  {"email": user['email'], "password":user['password']}
     else:
         raise IncorrectPasswordException()
+

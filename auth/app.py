@@ -19,6 +19,8 @@ db.init_app(app)
 print(app.config['MONGODB_SETTINGS'])
 from signup import *
 from signin import *
+from tokenauth import *
+from signout import *
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 6000))
