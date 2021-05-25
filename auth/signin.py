@@ -4,13 +4,13 @@ import os
 from app import app
 import jwt
 from validator import validate_password, validate_email
-from helpers import generate_hash, insert_into_db
+from helpers import compare_password
 from exceptions import (
     EmptyPasswordException, 
     InvalidPasswordLengthException, 
     InvalidEmailException,
     EmptyEmailException,
-    EmailAlreadyExistsException
+    UserDoesNotExistsException
 )
 from flask import (
     Flask, 
@@ -35,15 +35,14 @@ def set():
 def get():
     return session.get('key', 'not set')
 
-@app.route('/api/users/signup', methods=['POST'])
+@app.route('/api/users/signin', methods=['POST'])
 def signup():
     data = request.get_json()
     print(data)
     try:
         validate_password(data.get('password', None))
         validate_email(data.get('email', None))
-        hash = generate_hash(data['password'])
-        user = insert_into_db(data['email'], hash)
+        user = compare_password(data['email'],data['password'])
         encoded = jwt.encode({"user": user}, "secret", algorithm="HS256")
         print(user)
     except EmptyPasswordException:
@@ -54,10 +53,9 @@ def signup():
         abort(422, InvalidEmailException.get_message())
     except EmptyEmailException:
         abort(422, EmptyEmailException.get_message())
-    except EmailAlreadyExistsException:
-        abort(422, EmailAlreadyExistsException.get_message())
+    except UserDoesNotExistsException:
+        abort(422, UserDoesNotExistsException.get_message())
     return f"token: {encoded}, email: {user['email']}, password:{user['password']}"
-
 
 @app.errorhandler(422)
 def unprocessable(error):

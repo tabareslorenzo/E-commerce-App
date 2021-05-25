@@ -28,3 +28,25 @@ class EmptyEmailException(Exception):
     @staticmethod
     def get_message():
         return EmptyEmailException.message
+class EmailAlreadyExistsException(Exception):
+    message = "User with that Email Already Exists!"
+    def __init__(self):
+        super().__init__(EmailAlreadyExistsException.message)
+    @staticmethod
+    def get_message():
+        return EmailAlreadyExistsException.message
+class UserDoesNotExistsException(Exception):
+    message = "User does not exist!"
+    def __init__(self):
+        super().__init__(EmailAlreadyExistsException.message)
+    @staticmethod
+    def get_message():
+        return EmailAlreadyExistsException.message
+
+class IncorrectPasswordException(Exception):
+    message = "Incorrect Password!"
+    def __init__(self):
+        super().__init__(IncorrectPasswordException.message)
+    @staticmethod
+    def get_message():
+        return IncorrectPasswordException.message
