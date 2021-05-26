@@ -38,7 +38,7 @@ def auth():
         abort(422,  f"Token Decode Error, {e}")
     except UserDoesNotExistsException:
         abort(422, UserDoesNotExistsException.get_message())
-    return f"valid: {True}, email: {user['email']}, hash:{user['password']}"
+    return {"valid": True, "email": user['email'], "hash":user['password']}
 
 @app.errorhandler(422)
 def unprocessable(error):
