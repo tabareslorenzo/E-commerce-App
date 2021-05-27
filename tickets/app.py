@@ -18,10 +18,8 @@ db = MongoEngine()
 db.init_app(app)
 print(app.config['MONGODB_SETTINGS'])
 from routes.new import *
-# from signup import *
-# from signin import *
-# from tokenauth import *
-# from signout import *
+from routes.show import *
+from routes.update import *
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 6001))

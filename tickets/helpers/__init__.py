@@ -19,8 +19,15 @@ def insert_into_db(title, price, userId):
     else:
         raise TicketAlreadyExistsException()
 
-def get_user_from_db(email):
+def get_ticket_from_db(title):
+    print(title)
     ticket = Tickets.objects(title=title).first()
+    print(ticket)
     if ticket is None:
         raise TicketDoesNotExistsException()
-    return user
+    return ticket
+
+def update_ticket(id, title, price):
+    res = Tickets.objects(id=id).first()
+    res.update(title=title, price=price)
+    return res

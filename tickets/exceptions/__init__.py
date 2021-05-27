@@ -13,3 +13,11 @@ class TicketDoesNotExistsException(Exception):
     @staticmethod
     def get_message():
         return TicketDoesNotExistsException.message
+
+class TicketDoesNotBelongToYouException(Exception):
+    message = "Ticket Does not Belong To You!"
+    def __init__(self):
+        super().__init__(TicketDoesNotBelongToYouException.message)
+    @staticmethod
+    def get_message():
+        return TicketDoesNotBelongToYouException.message
