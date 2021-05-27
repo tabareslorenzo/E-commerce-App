@@ -4,7 +4,7 @@ import os
 from app import app
 import requests
 # from validator import validate_password, validate_email
-from helpers import update_ticket, get_ticket_from_db
+from helpers import update_ticket, get_ticket_with_id
 from exceptions import (
     TicketAlreadyExistsException,
     TicketDoesNotBelongToYouException
@@ -37,7 +37,8 @@ def update():
         if 'valid' not in r or not r['valid']:
             print(r)
             abort(422, r['message'])
-        if r['email'] != get_ticket_from_db(data['title'])['userId']:
+        print( r['email'])
+        if r['email'] != get_ticket_with_id(data['id'])['userId']:
             abort(401, TicketDoesNotBelongToYouException.get_message())
         ticket = update_ticket(data['id'], data['title'], data['price'])
     except TicketAlreadyExistsException:

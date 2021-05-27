@@ -27,7 +27,14 @@ def get_ticket_from_db(title):
         raise TicketDoesNotExistsException()
     return ticket
 
+def get_ticket_with_id(id):
+    ticket = res = Tickets.objects(id=id).first()
+    print(ticket)
+    if ticket is None:
+        raise TicketDoesNotExistsException()
+    return ticket
+
 def update_ticket(id, title, price):
-    res = Tickets.objects(id=id).first()
+    res = get_ticket_with_id(id)
     res.update(title=title, price=price)
-    return res
+    return get_ticket_with_id(id)
