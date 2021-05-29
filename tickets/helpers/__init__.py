@@ -7,17 +7,13 @@ from exceptions import (
 
 
 def insert_into_db(title, price, userId):
-    if Tickets.objects(title=title).first() is None:
-        Tickets(title=title, price=price, userId=userId).save()
-        ticket = Tickets.objects(title=title).first()
-        return {
-            "title": ticket['title'], 
-            "price":ticket['price'],
-            "userId":ticket['userId']
-
-            }
-    else:
-        raise TicketAlreadyExistsException()
+    Tickets(title=title, price=price, userId=userId).save()
+    ticket = Tickets.objects(title=title).first()
+    return {
+        "title": ticket['title'], 
+        "price":ticket['price'],
+        "userId":ticket['userId']
+        }
 
 def get_ticket_from_db(title):
     print(title)
