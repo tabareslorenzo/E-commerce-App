@@ -1,9 +1,10 @@
 import os
-from models.Tickets import Tickets
+from models.Ticket import Tickets
 from models.Order import Orders
 from exceptions import (
-    TicketAlreadyExistsException,
-    TicketDoesNotExistsException
+    OrderDoesNotExistsException,
+    TicketDoesNotExistsException,
+    TicketAlreadyReservedException
 )
 
 def reformat_order(order):
@@ -42,7 +43,15 @@ def get_order_from_db(userId,expiresAt):
 def is_ticket_reserved(ticket):
     orders = Orders.objects(ticket=ticket)
     reserved_order = filter(lambda order: (order.status != 'cancel') , orders)
-    return True if reserved_order else False
+    if reserved_order:
+        raise TicketAlreadyReservedException()
+    return False
+    
+def delete_order(id):
+    order = get_order_with_id(id)
+    reformated = reformat_order(order)
+    order.delete()
+    return reformated
 
 def get_order_with_id(id):
     order = res = Orders.objects(id=id).first()
