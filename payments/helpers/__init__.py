@@ -18,7 +18,11 @@ def insert_into_db(orderId, stripeId):
     }
 
 def get_order_with_id(id):
+<<<<<<< HEAD
     order = res = Orders.objects(id=id).first()
+=======
+    order = Orders.objects(id=id).first()
+>>>>>>> 229bb3c7449bce0e3cb9783ba8979326953b650c
     print(order)
     if order is None:
         raise OrderDoesNotExistsException()
