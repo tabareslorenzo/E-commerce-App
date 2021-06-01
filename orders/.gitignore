@@ -1,0 +1,4 @@
+orders/
+__pycache__/
+.env
+.envrc

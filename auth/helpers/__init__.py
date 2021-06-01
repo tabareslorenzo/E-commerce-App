@@ -8,10 +8,10 @@ from exceptions import (
 )
 
 
-
+salt = bcrypt.gensalt()
 def generate_hash(password):
     # salt = os.environ.get("SALT_ROUNDS")
-    salt = bcrypt.gensalt()
+    # salt = bcrypt.gensalt()
     return bcrypt.hashpw(password.encode('utf-8'), salt)
 
 def insert_into_db(email, hash):
@@ -30,9 +30,11 @@ def get_user_from_db(email):
 
 def compare_password(email, password):
     user = get_user_from_db(email)
-    db_hash = user['password']
+    db_hash = user['password'].encode('utf-8')
     hashed = generate_hash(password)
-    if hashed == db_hash:
+    paswd = password.encode('utf-8')
+    if  bcrypt.checkpw(paswd, db_hash):
         return  {"email": user['email'], "password":user['password']}
     else:
         raise IncorrectPasswordException()
+
