@@ -1,6 +1,7 @@
 import os
 from models.Ticket import Tickets
 from models.Order import Orders
+import requests
 from exceptions import (
     OrderDoesNotExistsException,
     TicketDoesNotExistsException,

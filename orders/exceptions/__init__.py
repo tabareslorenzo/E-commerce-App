@@ -21,3 +21,11 @@ class TicketAlreadyReservedException(Exception):
     @staticmethod
     def get_message():
         return TicketAlreadyReservedException.message
+
+class OrderDoesNotBelongToYouException(Exception):
+    message = "Order Does not Belong To You!"
+    def __init__(self):
+        super().__init__(OrderDoesNotBelongToYouException.message)
+    @staticmethod
+    def get_message():
+        return OrderDoesNotBelongToYouException.message

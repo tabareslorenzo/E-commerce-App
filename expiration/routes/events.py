@@ -4,9 +4,12 @@ import os
 from app import app
 import requests
 # from validator import validate_password, validate_email
-from helpers import insert_into_db
+from helpers import (
+    insert_into_db,
+    query_db_for_expired_orders
+)
 from exceptions import (
-    TicketAlreadyExistsException
+    InsertExpireToDBException
 )
 from flask import (
     Flask, 
@@ -22,23 +25,28 @@ from flask import (
 
 
 
-@app.route('/api/tickets', methods=['POST'])
-def new():
+@app.route('/api/expiration/events', methods=['POST'])
+def events():
     data = request.get_json()
     print(data)
-    
-    print(request.headers.get('Authorization'))
-    r = requests.get('http://localhost:6000/api/users/auth', 
-    headers={
-        "Authorization":
-        request.headers.get('Authorization')}).json()
-    print(r)
-    if 'valid' not in r or not r['valid']:
-        print(r)
-        abort(422, r['message']) 
-    ticket = insert_into_db(data['title'], data['price'], data['userId'])
-    return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
+    try:
+        
+        order = insert_into_db(
+            data["orderID"], 
+            data["expireTime"], 
+            data["isSent"]
+        )
+        return reformat_order(order)
+    except InsertExpireToDBException:
+        abort(500, InsertExpireToDBException.get_message())
 
+@app.errorhandler(500)
+def unprocessable(error):
+    return jsonify({
+    "Success" : False,
+    "error": 500,
+    "message": f"Internal server error: {error.description}"
+    }), 500
 
 @app.errorhandler(422)
 def unprocessable(error):

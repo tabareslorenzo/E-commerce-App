@@ -28,3 +28,5 @@ flask-mongoengine==1.0.0
 stripe==2.57.0
 requests==2.25.1
 DateTime==4.3
+multiprocess==0.70.11
+asyncio==3.4.3

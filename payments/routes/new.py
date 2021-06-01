@@ -8,14 +8,15 @@ from datetime import timedelta
 from stripe import stripe
 # from validator import validate_password, validate_email
 from exceptions import (
-    TicketDoesNotExistsException,
     OrderDoesNotExistsException,
-    TicketAlreadyReservedException
+    UserNotOwnerException,
+    CanceledOrderException
 )
 from helpers import (
     insert_into_db,
-    get_ticket_with_id,
-    is_ticket_reserved
+    get_order_with_id,
+    correct_user,
+    is_canceled
 )
 from flask import (
     Flask, 
@@ -50,19 +51,24 @@ def new():
         print(r)
         abort(422, r['message'])
     try :
-        order = get_order_with_id()
+        order = get_order_with_id(data['orderId'])
+        correct_user(r["email"], order['userId'])
+        is_canceled(order.status)
+        
         charge = stripe.Charge.create(
             amount=order.price,
             currency="usd",
             source=token, # obtained with Stripe.js
             metadata={'order_id': order.id}
         )
-        
-        return order
-    except TicketAlreadyReservedException:
-        abort(422, TicketAlreadyReservedException.get_message())
-    except TicketDoesNotExistsException:
-        abort(422, TicketDoesNotExistsException.get_message())
+        payment = insert_into_db(order.id, charge.id)
+        return payment
+    except OrderDoesNotExistsException:
+        abort(404, OrderDoesNotExistsException.get_message())
+    except UserNotOwnerException:
+        abort(422, UserNotOwnerException.get_message())
+    except CanceledOrderException:
+        abort(422, CanceledOrderException.get_message())
 
 
 @app.errorhandler(422)
