@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/expiration'
 db = SQLAlchemy(app)
-# from routes.new import *
+from routes.events import *
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 6004))

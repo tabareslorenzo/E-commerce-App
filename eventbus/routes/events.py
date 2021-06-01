@@ -5,7 +5,9 @@ from app import app
 import requests
 # from validator import validate_password, validate_email
 from helpers import (
+    send_event_to,
     insert_into_db,
+    get_events_from_db
 )
 from exceptions import (
     InsertExpireToDBException
@@ -24,20 +26,30 @@ from flask import (
 
 
 
-@app.route('/api/expiration/events', methods=['POST'])
+@app.route('/api/eventbus/events', methods=['POST'])
+def get_events():
+    try:
+        events = get_events_from_db()
+        return events
+    except InsertExpireToDBException:
+        abort(500, InsertExpireToDBException.get_message())
+
+@app.route('/api/eventbus/events', methods=['GET'])
 def events():
     data = request.get_json()
     print(data)
     try:
-        
-        expire = insert_into_db(
-            data["orderID"], 
-            data["expireTime"], 
-            data["isSent"]
-        )
-        return reformat_order(order)
-    except InsertExpireToDBException:
-        abort(500, InsertExpireToDBException.get_message())
+        event_data = data['data']
+        event_type = data["type"]
+        insert_event_into_db(event_data, event_type)
+        send_event_to(port=6000, service='auth', data=data)
+        send_event_to(port=6001, service='tickets', data=data)
+        send_event_to(port=6002, service='orders', data=data)
+        send_event_to(port=6003, service='payments', data=data)
+        send_event_to(port=6004, service='expiration', data=data)
+        return {"status": "Ok"}
+    except InsertEventToDBException:
+        abort(500, InsertEventToDBException.get_message())
 
 @app.errorhandler(500)
 def unprocessable(error):

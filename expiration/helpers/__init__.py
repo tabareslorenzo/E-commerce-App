@@ -36,7 +36,7 @@ def query_db_for_expired_orders(run):
 def notify_order_service(expired_orders):
     myobjc = {
         "type": EXPIRE_TYPE,
-        "orders": expired_orders
+        "data": expired_orders
     }
     r = requests.post(
         'http://localhost:6005/api/eventbus/events',

@@ -35,7 +35,7 @@ from flask import (
 # .cancel
 
 
-@app.route('/api/orders', methods=['POST'])
+@app.route('/api/payments', methods=['POST'])
 def new():
     data = request.get_json()
     print(data)

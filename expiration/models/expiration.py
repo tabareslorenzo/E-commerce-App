@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
+from app import db
 
 # orderID, expireTime, isSent
 class expiration(db.Model):
