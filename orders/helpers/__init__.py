@@ -9,6 +9,8 @@ from exceptions import (
 
 ORDER_CANCELLED = "ordercancelled"
 ORDER_CREATED = "ordercreated"
+STATUS_COMPLETE = "complete"
+STATUS_CANCELLED = "cancelled"
 
 def reformat_order(order):
     return {
@@ -91,3 +93,46 @@ def send_created_event(order):
         'http://localhost:6005/api/eventbus/events',
         data= myobjc
     )
+
+def handle_updated(data):
+    ticket = get_ticket_with_id(data['id'])
+    ticket.update(
+        title=data['title'],
+        price=data['price']
+    )
+
+def handle_created(data):
+    Ticket(
+        title=data['title'],
+        price=data['price'],
+        userId = data['userId'],
+        orderId = data['orderId']
+    ).save()
+    return Tickets.objects(
+        title=data['title'],
+        price=data['price'],
+        userId = data['userId'],
+        orderId = data['orderId']
+        ).first()
+    
+def handle_payment(data):
+    order = get_order_with_id(data['id'])
+    order.update(status=STATUS_COMPLETE)
+    return order
+
+def handle_expired(data):
+    order = get_order_with_id(data['id'])
+    order.update(status=STATUS_CANCELLED)
+    send_cancelled_event(order)
+    return order
+
+def handle_event(data):
+    if data['type'].lower().strip() == "expiredcreated":
+        return handle_expired(data['data'])
+    if data['type'].lower().strip() == "paymentcreated":
+        return handle_payment(data['data'])
+    if data['type'].lower().strip() == "ticketcreated":
+        return handle_created(data['data'])
+    if data['type'].lower().strip() == "ticketupdated":
+        return handle_updated(data['data'])
+

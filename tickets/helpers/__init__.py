@@ -5,7 +5,7 @@ from exceptions import (
     TicketDoesNotExistsException
 )
 
-TICKET_UPDATED = "ticketUpdated"
+TICKET_UPDATED = "ticketupdated"
 
 def insert_into_db(title, price, userId):
     Tickets(title=title, price=price, userId=userId).save()

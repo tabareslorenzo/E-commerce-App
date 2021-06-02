@@ -20,7 +20,7 @@ from flask import (
     session
 )
 
-TICKET_CREATED = "ticketCreated"
+TICKET_CREATED = "ticketcreated"
 
 @app.route('/api/tickets', methods=['POST'])
 def new():
