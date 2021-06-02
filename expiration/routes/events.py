@@ -5,7 +5,7 @@ from app import app
 import requests
 # from validator import validate_password, validate_email
 from helpers import (
-    insert_into_db,
+    handle_event,
 )
 from exceptions import (
     InsertExpireToDBException
@@ -29,13 +29,7 @@ def events():
     data = request.get_json()
     print(data)
     try:
-        
-        expire = insert_into_db(
-            data["orderID"], 
-            data["expireTime"], 
-            data["isSent"]
-        )
-        return reformat_order(order)
+        handle_event(data)
     except InsertExpireToDBException:
         abort(500, InsertExpireToDBException.get_message())
 

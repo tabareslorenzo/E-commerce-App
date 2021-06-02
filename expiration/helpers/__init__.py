@@ -50,4 +50,15 @@ def update_sent_orders(orders):
     for order in orders:
         _order = db.session.query(expiration).filter(expiration.orderID == order.id)
         _order.isSent = True
-    
+
+def handle_created(data):
+    expire = insert_into_db(
+        data["orderID"], 
+        data["expireTime"], 
+        data["isSent"]
+    )
+    return reformat_order(order)
+
+def handle_event(data):
+    if data["type"].lower().split() == "ordercreated":
+        return handle_created(data["data"])
