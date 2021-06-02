@@ -31,6 +31,8 @@ def query_db_for_expired_orders(run):
             expiration.expireTime < datetime.utcnow,
             expiration.isSent == False
             ).all()
+        notify_order_service(expired_orders)
+        update_sent_orders(expired_orders)
         asyncio.sleep(1)
 
 def notify_order_service(expired_orders):
@@ -46,6 +48,6 @@ def notify_order_service(expired_orders):
 
 def update_sent_orders(orders):
     for order in orders:
-        _order = db.session.query(expiration).filter(expiration.id == order.id)
+        _order = db.session.query(expiration).filter(expiration.orderID == order.id)
         _order.isSent = True
     

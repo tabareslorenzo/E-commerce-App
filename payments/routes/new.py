@@ -62,6 +62,7 @@ def new():
             metadata={'order_id': order.id}
         )
         payment = insert_into_db(order.id, charge.id)
+        send_update_event(payment)
         return payment
     except OrderDoesNotExistsException:
         abort(404, OrderDoesNotExistsException.get_message())
