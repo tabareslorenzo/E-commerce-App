@@ -5,6 +5,7 @@ from exceptions import (
     TicketDoesNotExistsException
 )
 
+TICKET_UPDATED = "ticketUpdated"
 
 def insert_into_db(title, price, userId):
     Tickets(title=title, price=price, userId=userId).save()
@@ -24,7 +25,7 @@ def get_ticket_from_db(title):
     return ticket
 
 def get_ticket_with_id(id):
-    ticket = res = Tickets.objects(id=id).first()
+    ticket = Tickets.objects(id=id).first()
     print(ticket)
     if ticket is None:
         raise TicketDoesNotExistsException()
@@ -34,3 +35,38 @@ def update_ticket(id, title, price):
     res = get_ticket_with_id(id)
     res.update(title=title, price=price)
     return get_ticket_with_id(id)
+
+def handle_cancel(data):
+    ticket = get_ticket_with_id(data['ticket']['id'])
+    if ticket is None:
+        raise TicketDoesNotExistsException()
+    ticket.update(orderId=None)
+    send_update_event(ticket)
+    print(ticket)
+    return ticket
+
+def handle_created(data):
+    ticket = get_ticket_with_id(data['ticket']['id'])
+    if ticket is None:
+        raise TicketDoesNotExistsException()
+    ticket.update(orderId=data['id'])
+    send_update_event(ticket)
+    return ticket
+
+def handle_event(data):
+    if data["type"].lower().strip() == "ordercancelled":
+        return handle_cancel(data['data'])
+    if data["type"].lower().strip() == "ordercreated":
+        return handle_created(data['data'])
+
+def send_update_event(ticket):
+    myobjc = {
+    "type": TICKET_UPDATED,
+    "data": ticket
+    }
+    requests.post(
+        'http://localhost:6005/api/eventbus/events',
+        data= myobjc
+    )
+        
+

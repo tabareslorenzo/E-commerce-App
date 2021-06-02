@@ -56,7 +56,7 @@ def new():
             userId=data['userId'], 
             status=data['status'], 
             expiresAt=expiresAt, 
-            ticket=ticket, 
+            ticket=data['ticketId'], 
             version=data['version']
             )
         return order

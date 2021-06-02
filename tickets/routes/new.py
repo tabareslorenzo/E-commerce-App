@@ -20,7 +20,7 @@ from flask import (
     session
 )
 
-
+TICKET_CREATED = "ticketCreated"
 
 @app.route('/api/tickets', methods=['POST'])
 def new():
@@ -37,6 +37,14 @@ def new():
         print(r)
         abort(422, r['message']) 
     ticket = insert_into_db(data['title'], data['price'], data['userId'])
+    myobjc = {
+        "type": TICKET_CREATED,
+        "data": ticket
+    }
+    r = requests.post(
+        'http://localhost:6005/api/eventbus/events',
+        data= myobjc
+    )
     return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
 
 
