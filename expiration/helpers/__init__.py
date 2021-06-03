@@ -1,11 +1,14 @@
 from models.expiration import expiration
-from app import db
 from datetime import datetime
 import requests
+from models.expiration import db, expiration
 from exceptions import (
     InsertExpireToDBException
 )
 import asyncio
+import time
+
+db.create_all()
 
 EXPIRE_TYPE = 'ExpiredCreated'
 def insert_into_db(orderID, expireTime, isSent):
@@ -28,12 +31,12 @@ def insert_into_db(orderID, expireTime, isSent):
 def query_db_for_expired_orders(run):
     while run.value:
         expired_orders = db.session.query(expiration).filter(
-            expiration.expireTime < datetime.utcnow,
+            expiration.expireTime < datetime.utcnow(),
             expiration.isSent == False
             ).all()
-        notify_order_service(expired_orders)
+        notify_order_service(expired_orders) if len(expired_orders) > 0 else None
         update_sent_orders(expired_orders)
-        asyncio.sleep(1)
+        time.sleep(1)
 
 def notify_order_service(expired_orders):
     myobjc = {
@@ -42,7 +45,7 @@ def notify_order_service(expired_orders):
     }
     r = requests.post(
         'http://localhost:6005/api/eventbus/events',
-        data= myobjc
+        json= myobjc
     )
 
 
@@ -62,3 +65,4 @@ def handle_created(data):
 def handle_event(data):
     if data["type"].lower().split() == "ordercreated":
         return handle_created(data["data"])
+    return None

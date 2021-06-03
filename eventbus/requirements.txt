@@ -31,3 +31,4 @@ requests==2.25.1
 DateTime==4.3
 multiprocess==0.70.11
 asyncio==3.4.3
+bson==0.5.10

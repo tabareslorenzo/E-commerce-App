@@ -6,7 +6,7 @@ import requests
 # from validator import validate_password, validate_email
 from helpers import get_order_with_id
 from exceptions import (
-    TicketAlreadyExistsException
+    OrderDoesNotExistsException
 )
 from flask import (
     Flask, 

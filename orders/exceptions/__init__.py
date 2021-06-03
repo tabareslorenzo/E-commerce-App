@@ -15,7 +15,7 @@ class OrderDoesNotExistsException(Exception):
         return OrderDoesNotExistsException.message
 
 class TicketAlreadyReservedException(Exception):
-    message = "Ticket Does not Exist!"
+    message = "Ticket Already Reserved!"
     def __init__(self):
         super().__init__(TicketAlreadyReservedException.message)
     @staticmethod

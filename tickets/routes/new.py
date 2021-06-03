@@ -41,11 +41,20 @@ def new():
         "type": TICKET_CREATED,
         "data": ticket
     }
+    print(myobjc)
+    print(myobjc)
+    print(myobjc)
+    print("::::")
+    print("::::")
+    print("::::")
+    print("::::")
     r = requests.post(
         'http://localhost:6005/api/eventbus/events',
-        data= myobjc
+        json= myobjc
     )
-    return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
+    print(json.loads(ticket)["id"]["$oid"])
+    return ticket
+    # return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
 
 
 @app.errorhandler(422)

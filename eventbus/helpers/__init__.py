@@ -1,5 +1,6 @@
 import os
 from models.events import events
+import requests
 from exceptions import (
     InsertEventToDBException,
 )
@@ -9,7 +10,7 @@ from exceptions import (
 def send_event_to(port, service, data):
     r = requests.post(
             f'http://localhost:{port}/api/{service}/events',
-            data= data
+            json= data
         )
 def insert_into_db(data, e_type):
     try:

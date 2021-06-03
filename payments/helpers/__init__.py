@@ -38,7 +38,7 @@ def send_update_event(payment):
     }
     requests.post(
         'http://localhost:6005/api/eventbus/events',
-        data= myobjc
+        json= myobjc
     )
 
 def reformat_order(order):
@@ -48,7 +48,7 @@ def reformat_order(order):
             "expiresAt": order['expiresAt'], 
             "status":order['status'],
             "version": order['version'],
-            "price":order['price'], 
+            "price":order['ticket']['price'], 
         }
 
 def handle_created(data):
@@ -56,7 +56,7 @@ def handle_created(data):
     status = data['status']
     expiresAt = data['expiresAt']
     version = data['version']
-    price = data['price']
+    price = data['ticket']['price']
     Orders(
         userId=userId, 
         status=status,
@@ -73,7 +73,8 @@ def handle_cancel(data):
     return reformat_order(order)
 
 def handle_event(data):
-    if data["type"] == "ordercancelled":
-        handle_cancel(data["data"])
-    if data["type"] == "ordercreated":
-        handle_created(data["data"])  
+    if data["type"].lower().strip() == "ordercancelled":
+        return handle_cancel(data["data"])
+    if data["type"].lower().strip() == "ordercreated":
+        return handle_created(data["data"])  
+    return None

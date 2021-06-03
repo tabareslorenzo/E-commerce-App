@@ -28,3 +28,6 @@ flask-mongoengine==1.0.0
 stripe==2.57.0
 requests==2.25.1
 DateTime==4.3
+python-dotenv==0.17.1
+bson==0.5.10
+

@@ -1,11 +1,15 @@
 import os
 from models.Ticket import Tickets
 from models.Order import Orders
+import requests
 from exceptions import (
     OrderDoesNotExistsException,
     TicketDoesNotExistsException,
     TicketAlreadyReservedException
 )
+
+from bson import json_util
+import json
 
 ORDER_CANCELLED = "ordercancelled"
 ORDER_CREATED = "ordercreated"
@@ -13,13 +17,25 @@ STATUS_COMPLETE = "complete"
 STATUS_CANCELLED = "cancelled"
 
 def reformat_order(order):
-    return {
+    ticket = order['ticket']
+    Obj = {
+        "id": ticket['id'],
+        "title": ticket['title'], 
+        "price":ticket['price'],
+        "userId":ticket['userId']
+        }
+    ticket_reformated = Obj
+    
+    order = {
+        "id": order['id'],
         "status": order['status'], 
         "expiresAt":order['expiresAt'],
         "userId":order['userId'],
          "ticket": order['ticket'],
          "version": order['version'],
         }
+    order['ticket'] = ticket_reformated
+    return json.dumps(order, default=json_util.default)
 def insert_into_db(userId, status, expiresAt, ticket, version):
     Orders(
         userId=userId, 
@@ -29,8 +45,9 @@ def insert_into_db(userId, status, expiresAt, ticket, version):
         version=version
         ).save()
     order = get_order_from_db(userId=userId, expiresAt=expiresAt)
-    send_created_event(order)
-    return reformat_order(order=order)
+    reformated = reformat_order(order=order)
+    send_created_event(reformated)
+    return reformated
 
 def get_ticket_from_db(title):
     print(title)
@@ -48,15 +65,16 @@ def get_order_from_db(userId,expiresAt):
 
 def is_ticket_reserved(ticket):
     orders = Orders.objects(ticket=ticket)
-    reserved_order = filter(lambda order: (order.status != 'cancel') , orders)
+    reserved_order = list(filter(lambda order: (order.status != 'cancel') , orders))
+    print(len(reserved_order))
     if reserved_order:
         raise TicketAlreadyReservedException()
     return False
     
 def delete_order(id):
     order = get_order_with_id(id)
-    send_cancelled_event(order)
-    reformated = reformat_order(order)
+    reformated = reformat_order(order=order)
+    send_cancelled_event(reformated)
     order.delete()
     return reformated
 
@@ -68,7 +86,8 @@ def get_order_with_id(id):
     return order
 
 def get_ticket_with_id(id):
-    ticket = res = Tickets.objects(id=id).first()
+    ticket = Tickets.objects(id=id).first()
+    print(ticket is None)
     print(ticket)
     if ticket is None:
         raise TicketDoesNotExistsException()
@@ -77,22 +96,25 @@ def get_ticket_with_id(id):
 def send_cancelled_event(order):
     myobjc = {
     "type": ORDER_CANCELLED,
-    "data": order
+    "data": json.dumps(order, default=json_util.default)
     }
     requests.post(
         'http://localhost:6005/api/eventbus/events',
-        data= myobjc
+        json= myobjc
     )
 
 def send_created_event(order):
+    print(ord)
     myobjc = {
     "type": ORDER_CREATED,
     "data": order
     }
+
     requests.post(
         'http://localhost:6005/api/eventbus/events',
-        data= myobjc
+        json = myobjc
     )
+
 
 def handle_updated(data):
     ticket = get_ticket_with_id(data['id'])
@@ -102,17 +124,16 @@ def handle_updated(data):
     )
 
 def handle_created(data):
-    Ticket(
+    Tickets(
+        id=data['id'],
         title=data['title'],
         price=data['price'],
         userId = data['userId'],
-        orderId = data['orderId']
     ).save()
     return Tickets.objects(
         title=data['title'],
         price=data['price'],
         userId = data['userId'],
-        orderId = data['orderId']
         ).first()
     
 def handle_payment(data):
@@ -123,6 +144,7 @@ def handle_payment(data):
 def handle_expired(data):
     order = get_order_with_id(data['id'])
     order.update(status=STATUS_CANCELLED)
+    reformat_order(order=order)
     send_cancelled_event(order)
     return order
 

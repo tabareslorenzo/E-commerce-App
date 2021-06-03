@@ -1,6 +1,8 @@
 from datetime import datetime
 from datetime import timedelta
-from app import db
+from flask_sqlalchemy import SQLAlchemy
+from app import app
+db = SQLAlchemy(app)
 
 # orderID, expireTime, isSent
 class expiration(db.Model):
@@ -8,7 +10,7 @@ class expiration(db.Model):
     orderID = db.Column(db.String(80), nullable=False)
     isSent = db.Column(db.Boolean, nullable=False, default=False)
     expireTime = db.Column(db.DateTime, nullable=False,
-        default=datetime.utcnow  + timedelta(seconds=60*15))
+        default=datetime.utcnow()  + timedelta(seconds=60*15))
 
     def __repr__(self):
         return '<Expire %r>' % self.orderID

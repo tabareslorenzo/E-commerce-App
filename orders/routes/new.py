@@ -50,6 +50,7 @@ def new():
         abort(422, r['message'])
     try :
         ticket = get_ticket_with_id(data['ticketId'])
+        print("=========")
         is_ticket_reserved(ticket)
         expiresAt = datetime.utcnow() + timedelta(seconds=60*15)
         order = insert_into_db(

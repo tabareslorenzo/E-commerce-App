@@ -17,9 +17,11 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine()
 db.init_app(app)
 print(app.config['MONGODB_SETTINGS'])
+from routes.events import *
 from routes.new import *
 from routes.show import *
 from routes.delete import *
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 6002))

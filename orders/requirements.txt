@@ -27,3 +27,4 @@ flask-mongoengine==1.0.0
 # cryptography==3.4.7
 requests==2.25.1
 DateTime==4.3
+bson==0.5.10

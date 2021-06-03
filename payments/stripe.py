@@ -1,2 +1,6 @@
 import stripe
-stripe.api_key = os.getenv(STRIPE_SECRET_KEY)
+import os
+from dotenv import load_dotenv
+load_dotenv('./.env')
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
