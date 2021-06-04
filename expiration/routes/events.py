@@ -27,25 +27,50 @@ from flask import (
 @app.route('/api/expiration/events', methods=['POST'])
 def events():
     data = request.get_json()
-    print(data)
+    # print(data)
+    print(type(data['data']))
+    print("whahah")
+    if type(data['data']) == type("str"):
+        print("event_data")
+        event_data = json.loads(data['data'])
+        id = event_data["id"]["$oid"]
+        print("event_data")
+        del event_data["id"]
+        event_data["id"] = id
+        print("event_data")
+        if "ticket" in event_data:
+            print("event_data")
+            id = event_data["ticket" ]["id"]["$oid"]
+            del event_data["ticket" ]["id"]
+            event_data["ticket" ]["id"] = id
+            event_data['expiresAt']['date'] = event_data['expiresAt']['$date']
+            del event_data['expiresAt']['$date']
+    else:
+        print("what")
+        event_data = data['data']
     try:
-        print(type(data['data']))
-        if type(data['data']) == type("str"):
-            event_data = json.loads(data['data'])
-            id = event_data["id"]["$oid"]
-            del event_data["id"]
-            event_data["id"] = id
-            if "ticket" in event_data:
-                print("event_data")
-                id = event_data["ticket" ]["id"]["$oid"]
-                del event_data["ticket" ]["id"]
-                event_data["ticket" ]["id"] = id
-                event_data['expiresAt']['date'] = event_data['expiresAt']['$date']
-                del event_data['expiresAt']['$date']
-        else:
-            event_data = data['data']
+        # print(type(data['data']))
+        # print("whahah")
+        # if type(data['data']) == type("str"):
+        #     print("event_data")
+        #     event_data = json.loads(data['data'])
+        #     id = event_data["id"]["$oid"]
+        #     print("event_data")
+        #     del event_data["id"]
+        #     event_data["id"] = id
+        #     print("event_data")
+        #     if "ticket" in event_data:
+        #         print("event_data")
+        #         id = event_data["ticket" ]["id"]["$oid"]
+        #         del event_data["ticket" ]["id"]
+        #         event_data["ticket" ]["id"] = id
+        #         event_data['expiresAt']['date'] = event_data['expiresAt']['$date']
+        #         del event_data['expiresAt']['$date']
+        # else:
+        #     print("what")
+        #     event_data = data['data']
         event_type = data["type"]
-        print(event_type)
+        print(event_type,"--------")
         res = handle_event({
             "type":event_type,
             'data': event_data
@@ -59,7 +84,7 @@ def events():
         abort(500, InsertExpireToDBException.get_message())
     except Exception as e:
         print(e)
-        return {"error": True }
+        raise e
 
 @app.errorhandler(500)
 def unprocessable(error):

@@ -12,12 +12,14 @@ db.create_all()
 
 EXPIRE_TYPE = 'ExpiredCreated'
 def insert_into_db(orderID, expireTime, isSent):
-    
+    expireTime = datetime.fromtimestamp(expireTime / 1e3)
+    error = False
     try:
         expire = expiration(orderID=orderID, expireTime=expireTime, isSent=isSent)
         db.session.add(expire)
         db.session.commit()
-    except:
+    except Exception as e:
+        print(e)
         error = True
         db.session.rollback()
     finally:
@@ -26,7 +28,12 @@ def insert_into_db(orderID, expireTime, isSent):
             raise InsertExpireToDBException()
         else:
             print(f'Order {orderID} was successfully listed!')
-    return expire
+    expire = db.session.query(expiration).filter(
+        expiration.orderID==orderID, 
+        expiration.expireTime==expireTime, 
+        expiration.isSent==isSent).one()
+    print(expire)
+    return reformat_expire(expire)
 
 def query_db_for_expired_orders(run):
     while run.value:
@@ -39,6 +46,7 @@ def query_db_for_expired_orders(run):
         time.sleep(1)
 
 def notify_order_service(expired_orders):
+    expired_orders = list(map(reformat_expire, expired_orders))
     myobjc = {
         "type": EXPIRE_TYPE,
         "data": expired_orders
@@ -55,14 +63,23 @@ def update_sent_orders(orders):
         _order.isSent = True
 
 def handle_created(data):
+    print(data)
     expire = insert_into_db(
-        data["orderID"], 
-        data["expireTime"], 
-        data["isSent"]
+        data["id"], 
+        data["expiresAt"]["date"], 
+        False
     )
-    return reformat_order(order)
+    return expire
 
 def handle_event(data):
-    if data["type"].lower().split() == "ordercreated":
+    print(data["type"].lower().split())
+    if data["type"].lower() == "ordercreated":
         return handle_created(data["data"])
     return None
+def reformat_expire(expire):
+    return {
+        "id": expire.id,
+        "orderId": expire.orderID,
+        "isSent": expire.isSent,
+        "expireTime": str(expire.expireTime)
+    }

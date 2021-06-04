@@ -49,21 +49,15 @@ def events():
             id = event_data["id"]["$oid"]
             del event_data["id"]
             event_data["id"] = id
-            print(data['data'], "-======")
             
             if "ticket" in event_data:
                 print("event_data")
                 id = event_data["ticket" ]["id"]["$oid"]
                 del event_data["ticket" ]["id"]
-                print("event_data")
                 event_data["ticket" ]["id"] = id
-                print("event_data")
-                print(event_data)
                 event_data['expiresAt']['date'] = event_data['expiresAt']['$date']
                 del event_data['expiresAt']['$date']
-                print("event_data")
-                print(event_data)
-                print(event_data, "-======")
+
         else:
             event_data = data['data']
         print(event_data,"-======")

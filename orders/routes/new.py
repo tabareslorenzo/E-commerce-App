@@ -52,7 +52,7 @@ def new():
         ticket = get_ticket_with_id(data['ticketId'])
         print("=========")
         is_ticket_reserved(ticket)
-        expiresAt = datetime.utcnow() + timedelta(seconds=60*15)
+        expiresAt = datetime.utcnow() + timedelta(seconds=1*15)
         order = insert_into_db(
             userId=data['userId'], 
             status=data['status'], 

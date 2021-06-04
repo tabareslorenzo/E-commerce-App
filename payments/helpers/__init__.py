@@ -1,6 +1,9 @@
 import os
 from models.Order import Orders
 from models.Payment import Payments
+from bson import json_util
+import datetime
+import json
 from exceptions import (
     OrderDoesNotExistsException,
     UserNotOwnerException,
@@ -48,13 +51,16 @@ def reformat_order(order):
             "expiresAt": order['expiresAt'], 
             "status":order['status'],
             "version": order['version'],
-            "price":order['ticket']['price'], 
+            "price":order['price'], 
         }
 
 def handle_created(data):
     userId = data['userId']
-    status = data['status']
-    expiresAt = data['expiresAt']
+    status = data['status'] 
+    expiresAt = json.loads(str(data['expiresAt']['date']), object_hook=json_util.object_hook)
+    expiresAt = datetime.datetime.fromtimestamp(expiresAt / 1e3)
+    print(expiresAt)
+    print(data)
     version = data['version']
     price = data['ticket']['price']
     Orders(
