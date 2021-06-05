@@ -57,7 +57,7 @@ def new():
         is_canceled(order.status)
         print("]]]]]]]]]]]]]]]]")
         charge = stripe.Charge.create(
-            amount=order.price + 4,
+            amount=order.price,
             currency="usd",
             source=token_card, # obtained with Stripe.js
             metadata={'order_id': order.id}
