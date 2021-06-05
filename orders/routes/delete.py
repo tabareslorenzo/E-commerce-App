@@ -39,7 +39,7 @@ def delete(key: str):
         if 'valid' not in r or not r['valid']:
             print(r)
             abort(422, r['message']) 
-        if r['email'] != get_order_with_id(data['id'])['userId']:
+        if r['email'] != get_order_with_id(key)['userId']:
             abort(401, OrderDoesNotBelongToYouException.get_message())
         return delete_order(key)
     except OrderDoesNotExistsException:

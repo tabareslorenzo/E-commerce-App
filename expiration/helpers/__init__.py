@@ -1,5 +1,5 @@
 from models.expiration import expiration
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 from models.expiration import db, expiration
 from exceptions import (
@@ -13,6 +13,7 @@ db.create_all()
 EXPIRE_TYPE = 'ExpiredCreated'
 def insert_into_db(orderID, expireTime, isSent):
     expireTime = datetime.fromtimestamp(expireTime / 1e3)
+    print(expireTime, "00000000")
     error = False
     try:
         expire = expiration(orderID=orderID, expireTime=expireTime, isSent=isSent)
@@ -37,8 +38,9 @@ def insert_into_db(orderID, expireTime, isSent):
 
 def query_db_for_expired_orders(run):
     while run.value:
+        print(datetime.utcnow() - timedelta(hours=4), "00000000")
         expired_orders = db.session.query(expiration).filter(
-            expiration.expireTime < datetime.utcnow(),
+            expiration.expireTime < datetime.utcnow() -  timedelta(hours=4),
             expiration.isSent == False
             ).all()
         notify_order_service(expired_orders) if len(expired_orders) > 0 else None
@@ -46,7 +48,7 @@ def query_db_for_expired_orders(run):
         time.sleep(1)
 
 def notify_order_service(expired_orders):
-    expired_orders = list(map(reformat_expire, expired_orders))
+    expired_orders = dict((expired.id,dict_expire(expired)) for expired in expired_orders)
     myobjc = {
         "type": EXPIRE_TYPE,
         "data": expired_orders
@@ -59,8 +61,15 @@ def notify_order_service(expired_orders):
 
 def update_sent_orders(orders):
     for order in orders:
-        _order = db.session.query(expiration).filter(expiration.orderID == order.id)
+        print(order, "wwwwwww")
+        _order = db.session.query(expiration).filter(expiration.orderID == order.orderID).first()
         _order.isSent = True
+        print(_order, "wwwwwww")
+        print(_order.id)
+        print(_order.orderID)
+        print(_order.isSent)
+        print(_order.expireTime)
+        db.session.commit()
 
 def handle_created(data):
     print(data)
@@ -82,4 +91,12 @@ def reformat_expire(expire):
         "orderId": expire.orderID,
         "isSent": expire.isSent,
         "expireTime": str(expire.expireTime)
+    }
+def dict_expire(expire):
+    return {
+       
+        "orderId": expire.orderID,
+        "isSent": expire.isSent,
+        "expireTime": str(expire.expireTime)
+       
     }

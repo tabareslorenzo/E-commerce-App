@@ -7,13 +7,17 @@ from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
 
-
-
 app.config['MONGODB_SETTINGS'] = {
     'db': os.environ.get("MONGO_DB_NAME", "orders"),
     'host': os.environ.get("MONGO_SERVICE_HOST", "localhost"),
     'port': int(os.environ.get("MONGO_SERVICE_PORT", "27017"))
 }
+
+# app.config['MONGODB_SETTINGS'] = {
+#     'db': os.environ.get("MONGO_DB_NAME", "orders"),
+#     'host': os.environ.get("MONGO_SERVICE_HOST", "localhost"),
+#     'port': int(os.environ.get("MONGO_SERVICE_PORT", "27017"))
+# }
 db = MongoEngine()
 db.init_app(app)
 print(app.config['MONGODB_SETTINGS'])

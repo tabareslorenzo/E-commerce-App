@@ -12,7 +12,7 @@ TICKET_UPDATED = "ticketupdated"
 
 def insert_into_db(title, price, userId):
     Tickets(title=title, price=price, userId=userId).save()
-    ticket = Tickets.objects(title=title).first()
+    ticket = Tickets.objects(title=title, price=price, userId=userId).first()
     Obj = {
         "id": ticket['id'],
         "title": ticket['title'], 
@@ -72,6 +72,8 @@ def handle_created(data):
     print(data['id'])
     ticket.update(orderId=data['id'])
     print(ticket)
+    print(ticket, "00000")
+    print(ticket, "00000")
     ticket = {
         "id": ticket['id'],
         "title": ticket['title'], 
@@ -79,6 +81,7 @@ def handle_created(data):
         "userId":ticket['userId'],
         "orderId":ticket['orderId']
         }
+    print(ticket)
     send_update_event(ticket)
     return ticket
 

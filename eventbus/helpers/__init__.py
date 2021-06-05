@@ -13,12 +13,14 @@ def send_event_to(port, service, data):
             json= data
         )
 def insert_into_db(data, e_type):
+    print(data)
     try:
         events(
             data=data, 
             eventType=e_type
             ).save()
-    except:
+    except Exception as e:
+        print(e)
         raise InsertEventToDBException()
     return {"status": "Success"}
 

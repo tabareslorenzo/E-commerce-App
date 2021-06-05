@@ -65,7 +65,7 @@ def get_order_from_db(userId,expiresAt):
 
 def is_ticket_reserved(ticket):
     orders = Orders.objects(ticket=ticket)
-    reserved_order = list(filter(lambda order: (order.status != 'cancel') , orders))
+    reserved_order = list(filter(lambda order: (order.status != 'cancelled') , orders))
     print(len(reserved_order))
     if reserved_order:
         raise TicketAlreadyReservedException()
@@ -79,7 +79,7 @@ def delete_order(id):
     return reformated
 
 def get_order_with_id(id):
-    order = res = Orders.objects(id=id).first()
+    order = Orders.objects(id=id).first()
     print(order)
     if order is None:
         raise OrderDoesNotExistsException()
@@ -96,7 +96,7 @@ def get_ticket_with_id(id):
 def send_cancelled_event(order):
     myobjc = {
     "type": ORDER_CANCELLED,
-    "data": json.dumps(order, default=json_util.default)
+    "data": order
     }
     requests.post(
         'http://localhost:6005/api/eventbus/events',
@@ -124,12 +124,21 @@ def handle_updated(data):
     )
 
 def handle_created(data):
-    Tickets(
-        id=data['id'],
+    print("handle created")
+    try:
+        Tickets(
+            id=data['id'],
+            title=data['title'],
+            price=data['price'],
+            userId = data['userId'],
+        ).save()
+    except Exception as e:
+        print(e)
+    print(Tickets.objects(
         title=data['title'],
         price=data['price'],
         userId = data['userId'],
-    ).save()
+        ).first()["userId"])
     return Tickets.objects(
         title=data['title'],
         price=data['price'],
@@ -142,13 +151,18 @@ def handle_payment(data):
     return order
 
 def handle_expired(data):
-    order = get_order_with_id(data['id'])
-    order.update(status=STATUS_CANCELLED)
-    reformat_order(order=order)
-    send_cancelled_event(order)
-    return order
+    # iterate through dict of order objects
+    for key in data:
+        print(data[key])
+        print(key)
+        order = get_order_with_id(data[key]['orderId'])
+        order.update(status=STATUS_CANCELLED)
+        order = reformat_order(order=order)
+        send_cancelled_event(order)
+    return data
 
 def handle_event(data):
+    print("handle event")
     if data['type'].lower().strip() == "expiredcreated":
         return handle_expired(data['data'])
     if data['type'].lower().strip() == "paymentcreated":
