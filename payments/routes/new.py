@@ -5,7 +5,7 @@ from app import app
 import requests
 from datetime import datetime
 from datetime import timedelta
-from stripe import stripe
+from stripe_helper import stripe, token_card
 # from validator import validate_password, validate_email
 from exceptions import (
     OrderDoesNotExistsException,
@@ -16,7 +16,8 @@ from helpers import (
     insert_into_db,
     get_order_with_id,
     correct_user,
-    is_canceled
+    is_canceled,
+    send_update_event
 )
 from flask import (
     Flask, 
@@ -54,14 +55,14 @@ def new():
         order = get_order_with_id(data['orderId'])
         correct_user(r["email"], order['userId'])
         is_canceled(order.status)
-        
+        print("]]]]]]]]]]]]]]]]")
         charge = stripe.Charge.create(
-            amount=order.price,
+            amount=order.price + 4,
             currency="usd",
-            source=token, # obtained with Stripe.js
+            source=token_card, # obtained with Stripe.js
             metadata={'order_id': order.id}
         )
-        payment = insert_into_db(order.id, charge.id)
+        payment = insert_into_db(str(data['orderId']), str(charge.id))
         send_update_event(payment)
         return payment
     except OrderDoesNotExistsException:

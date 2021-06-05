@@ -74,6 +74,8 @@ def is_ticket_reserved(ticket):
 def delete_order(id):
     order = get_order_with_id(id)
     reformated = reformat_order(order=order)
+    if order['status'] == STATUS_COMPLETE:
+        return reformated
     send_cancelled_event(reformated)
     order.delete()
     return reformated
@@ -146,7 +148,7 @@ def handle_created(data):
         ).first()
     
 def handle_payment(data):
-    order = get_order_with_id(data['id'])
+    order = get_order_with_id(data['orderId'])
     order.update(status=STATUS_COMPLETE)
     return order
 
@@ -156,6 +158,8 @@ def handle_expired(data):
         print(data[key])
         print(key)
         order = get_order_with_id(data[key]['orderId'])
+        if order['status'] == STATUS_COMPLETE:
+            return data
         order.update(status=STATUS_CANCELLED)
         order = reformat_order(order=order)
         send_cancelled_event(order)

@@ -4,6 +4,7 @@ from models.Payment import Payments
 from bson import json_util
 import datetime
 import json
+import requests
 from exceptions import (
     OrderDoesNotExistsException,
     UserNotOwnerException,
@@ -64,6 +65,7 @@ def handle_created(data):
     version = data['version']
     price = data['ticket']['price']
     orderId = data['id']
+    print(data)
     Orders(
         userId=userId, 
         status=status,
