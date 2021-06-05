@@ -21,7 +21,7 @@ def insert_into_db(orderId, stripeId):
     }
 
 def get_order_with_id(id):
-    order = Orders.objects(id=id).first()
+    order = Orders.objects(orderId=id).first()
     print(order)
     if order is None:
         raise OrderDoesNotExistsException()
@@ -63,18 +63,20 @@ def handle_created(data):
     print(data)
     version = data['version']
     price = data['ticket']['price']
+    orderId = data['id']
     Orders(
         userId=userId, 
         status=status,
         expiresAt=expiresAt,
         version=version,
-        price=price
+        price=price,
+        orderId=orderId
     ).save()
     order = Orders.objects(userId=userId,expiresAt=expiresAt).first()
     return reformat_order(order)
 
 def handle_cancel(data):
-    order = get_order_with_id(data.id)
+    order = get_order_with_id(data['id'])
     order.update(status=CANCELED)
     return reformat_order(order)
 

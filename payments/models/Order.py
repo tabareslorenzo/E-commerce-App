@@ -10,4 +10,5 @@ class Orders(db.Document):
     expiresAt = DateTimeField()
     version = IntField(required=True)
     price = IntField(required=True)
+    orderId = StringField(required=True)
 
