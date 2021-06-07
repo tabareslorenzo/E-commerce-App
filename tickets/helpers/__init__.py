@@ -21,7 +21,9 @@ def insert_into_db(title, price, userId):
         "orderId":ticket['orderId']
         }
     return json.dumps(Obj, default=json_util.default)
-
+def get_all_ticket_from_db():
+    ticket = Tickets.objects(orderId=None)
+    return ticket
 def get_ticket_from_db(title):
     print(title)
     ticket = Tickets.objects(title=title).first()

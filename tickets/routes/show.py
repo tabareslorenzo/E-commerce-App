@@ -6,7 +6,7 @@ import requests
 # from validator import validate_password, validate_email
 from helpers import get_ticket_from_db
 from exceptions import (
-    TicketAlreadyExistsException
+    TicketDoesNotExistsException
 )
 from flask import (
     Flask, 
@@ -36,8 +36,8 @@ def show(key: str):
             print(r)
             abort(422, r['message']) 
         ticket = get_ticket_from_db(key)
-    except TicketAlreadyExistsException:
-        abort(422, TicketAlreadyExistsException.get_message())
+    except TicketDoesNotExistsException:
+        abort(422, TicketDoesNotExistsException.get_message())
     return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
 
 

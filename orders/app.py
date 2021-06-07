@@ -25,6 +25,7 @@ from routes.events import *
 from routes.new import *
 from routes.show import *
 from routes.delete import *
+from routes.index import *
 
 
 if __name__ == '__main__':

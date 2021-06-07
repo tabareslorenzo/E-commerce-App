@@ -19,6 +19,7 @@ db.init_app(app)
 print(app.config['MONGODB_SETTINGS'])
 
 from routes.events import *
+from routes.index import *
 from routes.new import *
 from routes.show import *
 from routes.update import *

@@ -49,6 +49,10 @@ def insert_into_db(userId, status, expiresAt, ticket, version):
     send_created_event(reformated)
     return reformated
 
+def get_orders_from_user(user):
+    order = Orders.objects(userId=user)
+    return order
+
 def get_ticket_from_db(title):
     print(title)
     ticket = Tickets.objects(title=title).first()
