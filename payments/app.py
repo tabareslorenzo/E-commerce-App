@@ -5,7 +5,8 @@ from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
 
-
+from flask_cors import CORS
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['MONGODB_SETTINGS'] = {
     'db': os.environ.get("MONGO_DB_NAME", "payments"),

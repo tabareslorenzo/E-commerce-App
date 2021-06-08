@@ -12,6 +12,8 @@ app.config['MONGODB_SETTINGS'] = {
     'host': os.environ.get("MONGO_SERVICE_HOST", "localhost"),
     'port': int(os.environ.get("MONGO_SERVICE_PORT", "27017"))
 }
+from flask_cors import CORS
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 # app.config['MONGODB_SETTINGS'] = {
 #     'db': os.environ.get("MONGO_DB_NAME", "orders"),

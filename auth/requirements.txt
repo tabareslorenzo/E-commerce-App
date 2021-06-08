@@ -25,3 +25,4 @@ mongoengine==0.23.1
 bcrypt==3.2.0
 flask-mongoengine==1.0.0
 cryptography==3.4.7
+Flask-Cors==3.0.10

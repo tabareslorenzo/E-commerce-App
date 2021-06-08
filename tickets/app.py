@@ -7,6 +7,8 @@ from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
 
+from flask_cors import CORS
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 app.config['MONGODB_SETTINGS'] = {
@@ -16,7 +18,8 @@ app.config['MONGODB_SETTINGS'] = {
 }
 db = MongoEngine()
 db.init_app(app)
-print(app.config['MONGODB_SETTINGS'])
+
+# print(app.config['MONGODB_SETTINGS'])
 
 from routes.events import *
 from routes.index import *

@@ -5,6 +5,7 @@ from app import app
 import jwt
 from validator import validate_password, validate_email
 from helpers import compare_password
+from flask_cors import CORS, cross_origin
 from exceptions import (
     EmptyPasswordException, 
     InvalidPasswordLengthException, 
@@ -55,7 +56,7 @@ def signin():
         abort(422, EmptyEmailException.get_message())
     except UserDoesNotExistsException:
         abort(422, UserDoesNotExistsException.get_message())
-    return f"token: {encoded}, email: {user['email']}, password:{user['password']}"
+    return {"token": encoded, "email": user['email'], "password":user['password']}
 
 @app.errorhandler(422)
 def unprocessable(error):
