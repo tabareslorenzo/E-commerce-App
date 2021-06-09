@@ -67,6 +67,7 @@ export default {
                 localStorage.setItem('token', data['token'])
                 console.log(localStorage.getItem('token'));
                 this.$emit('updateLocalStorage', localStorage.getItem('token'))
+                this.$router.push({ path: '/' })
             })
             .catch(err => {
                 console.log(err);

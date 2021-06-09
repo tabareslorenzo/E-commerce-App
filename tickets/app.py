@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 from flask_cors import CORS
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+print(cors)
 
 
 app.config['MONGODB_SETTINGS'] = {

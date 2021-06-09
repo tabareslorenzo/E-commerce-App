@@ -51,6 +51,11 @@ export default new Router({
       component: orderItem,
     },
     {
+      path: '/tickets/new',
+      name: 'newTicket',
+      component: newTicket,
+    },
+    {
       path: '/tickets/:id',
       name: 'ticketItem',
       component: ticketItem,
@@ -60,10 +65,6 @@ export default new Router({
       name: 'tickets',
       component: tickets,
     },
-    {
-      path: '/tickets/new',
-      name: 'newTicket',
-      component: newTicket,
-    },
+    
   ],
 });

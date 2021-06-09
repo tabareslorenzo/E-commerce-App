@@ -4,7 +4,7 @@ import os
 from app import app
 import requests
 # from validator import validate_password, validate_email
-from helpers import get_order_with_id
+from helpers import get_order_with_id, reformat_order
 from exceptions import (
     OrderDoesNotExistsException
 )

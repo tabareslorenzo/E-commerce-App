@@ -54,11 +54,11 @@ def new():
         is_ticket_reserved(ticket)
         expiresAt = datetime.utcnow() + timedelta(seconds=60*15)
         order = insert_into_db(
-            userId=data['userId'], 
-            status=data['status'], 
+            userId=r['email'], 
+            status="Created", 
             expiresAt=expiresAt, 
             ticket=data['ticketId'], 
-            version=data['version']
+            version=0
             )
         return order
     except TicketAlreadyReservedException:

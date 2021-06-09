@@ -46,8 +46,8 @@ def update():
             abort(401, TicketDoesNotBelongToYouException.get_message())
         ticket = update_ticket(data['id'], data['title'], data['price'])
         send_update_event(ticket)
-    except TicketDoesNotBelongToYouException:
-        abort(422, TicketDoesNotBelongToYouException.get_message())
+    except TicketAlreadyExistsException:
+        abort(422, TicketAlreadyExistsException.get_message())
     return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
 
 

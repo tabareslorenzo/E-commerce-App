@@ -16,6 +16,7 @@ export default {
             localStorage.setItem('token', undefined)
             console.log(localStorage.getItem('token'));
             this.$emit('updateLocalStorage', localStorage.getItem('token'))
+            this.$router.push({ path: '/' })
         }
     },
 }

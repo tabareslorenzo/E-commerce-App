@@ -4,7 +4,7 @@ import os
 from app import app
 import requests
 # from validator import validate_password, validate_email
-from helpers import get_ticket_from_db
+from helpers import get_ticket_with_id
 from exceptions import (
     TicketDoesNotExistsException
 )
@@ -35,10 +35,10 @@ def show(key: str):
         if 'valid' not in r or not r['valid']:
             print(r)
             abort(422, r['message']) 
-        ticket = get_ticket_from_db(key)
+        ticket = get_ticket_with_id(key)
     except TicketDoesNotExistsException:
         abort(422, TicketDoesNotExistsException.get_message())
-    return f"title: {ticket['title']}, price: {ticket['price']}, userId:{ticket['userId']}"
+    return {"title": ticket['title'], "price": ticket['price'], "userId":ticket['userId']}
 
 
 @app.errorhandler(422)

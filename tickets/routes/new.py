@@ -36,7 +36,7 @@ def new():
     if 'valid' not in r or not r['valid']:
         print(r)
         abort(422, r['message']) 
-    ticket = insert_into_db(data['title'], data['price'], data['userId'])
+    ticket = insert_into_db(data['title'], data['price'], r['email'])
     myobjc = {
         "type": TICKET_CREATED,
         "data": ticket

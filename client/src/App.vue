@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header :currentUser=token></Header>
+    <Header :currentUser=getToken></Header>
     <router-view @updateLocalStorage="updateLocalStorage"/>
     <!-- $emit('updateLocalStorage', localStorage.getItem('token')) -->
   </div>
