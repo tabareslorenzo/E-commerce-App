@@ -13,7 +13,9 @@ export default {
   methods: {
         handleSubmit(){
             localStorage.removeItem('token');
+            localStorage.setItem('token', undefined)
             console.log(localStorage.getItem('token'));
+            this.$emit('updateLocalStorage', localStorage.getItem('token'))
         }
     },
 }

@@ -3,12 +3,13 @@
     <ul>
         <li v-for="link in links" :key="link.label">
                 <router-link 
-                v-if="(link.signedIn && currentUser !== undefined) || (!link.signedIn && currentUser === undefined)" 
+                v-if="(link.signedIn && currentUser !== String(undefined)) || (!link.signedIn && currentUser === String(undefined))"
                 :to="link.href">
 
                     <NavLink :class="nav">
                         {{ link.label }}
                     </NavLink>
+                    
         
                 </router-link>
         </li>
@@ -18,7 +19,7 @@
 
                     <NavLink :class="nav">
                         LandingPage
-                    </NavLink>
+                    </NavLink>   
         
                 </router-link>
         </li>
@@ -40,7 +41,6 @@ export default {
         { signedIn: true,label: 'Sell Tickets', href: '/tickets/new' },
         { signedIn: true, label: 'My Orders', href: '/orders' },
         { signedIn: true, label: 'Sign Out', href: '/auth/signout' },
-        { signedIn: true, label: 'Sign Out', href: '/auth/signout' }
         ]
       }
     

@@ -1,7 +1,8 @@
 <template>
   <div id="app">
-    <Header></Header>
-    <router-view/>
+    <Header :currentUser=token></Header>
+    <router-view @updateLocalStorage="updateLocalStorage"/>
+    <!-- $emit('updateLocalStorage', localStorage.getItem('token')) -->
   </div>
 </template>
 
@@ -13,7 +14,24 @@ export default {
   name: 'App',
   components: {
     Header
-  }
+  },
+  methods: {
+      updateLocalStorage(token) {
+        this.token = token;
+      }
+    },
+  computed: {
+    // a computed getter
+    getToken() {
+      return this.token
+    }
+  },
+  data()
+    {
+        return {
+          token: undefined
+        }
+    },
 }
 </script>
 

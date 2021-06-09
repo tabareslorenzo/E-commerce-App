@@ -48,6 +48,7 @@ export default {
                 console.log(data);
                 localStorage.setItem('token', data['token'])
                 console.log(localStorage.getItem('token'));
+                this.$emit('updateLocalStorage', localStorage.getItem('token'))
             })
             .catch(err => {
                 console.log(err);

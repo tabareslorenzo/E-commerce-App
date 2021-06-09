@@ -56,8 +56,7 @@ def signup():
         abort(422, EmptyEmailException.get_message())
     except EmailAlreadyExistsException:
         abort(422, EmailAlreadyExistsException.get_message())
-    return f"token: {encoded}, email: {user['email']}, password:{user['password']}"
-
+    return {"token": encoded, "email": user['email'], "password":user['password']}
 
 @app.errorhandler(422)
 def unprocessable(error):
