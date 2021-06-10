@@ -30,6 +30,9 @@
                     Seller: {{data.ticket.userId}}
                 </p>
         </div>
+        <div>
+            <Button @click="handleBuy">Purchase</Button>
+        </div>
         
         
     </div>
@@ -92,7 +95,41 @@ export default {
             this.data = this.reformat(data);
 
 
+      },
+      async handleBuy()
+      {
+          const url = "http://localhost:6003/api/payments"
+          const token = String(localStorage.getItem('token'))
+          const purchaseData = {
+              'orderId': this.id
+          }
+          const res = await fetch(url, {
+                                crossDomain:true,
+                                mode: 'cors', 
+                                method: 'POST', 
+                                credentials: 'same-origin', 
+                                headers: {
+                                    'Authorization': token,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(purchaseData)
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                return;
+                            });
+            const data = await res.json()
+            console.log(data);
+            if(data !== undefined)
+            {
+                this.$router.push({ path: "/orders" })
+            }
+            // console.log(this.reformat(data));
+            // this.data = this.reformat(data);
+
+
       }
+      
   }
 }
 </script>
